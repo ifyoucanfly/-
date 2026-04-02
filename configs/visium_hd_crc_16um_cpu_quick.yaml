@@ -1,0 +1,108 @@
+seed: 42
+device: cpu
+data:
+  name: visium_hd_crc
+  annotation_csv: data/16um_squares_annotation.csv
+  gold_grn_path: runs/preprocessed/gold_grn_collectri_16um_GSM8594569_P5CRC_symbols.csv
+  num_genes: 512
+  num_timepoints: 8
+  pseudotime_mode: zE0
+  gold_force_keep: 0
+  gold_min_pos_edges: 500
+  gold_max_force_keep: 512
+  max_cells: 2000
+  batch_size: 1
+  k_nn: 10
+  delta_t: 1.0
+  noise_std: 0.01
+  grid_um: 20.0
+  smooth_sigma: 1.2
+  smooth_radius: 3
+  zI_dim: 4
+  zN_dim: 4
+  env_map:
+    env1_labels:
+    - Tumor
+    - Malignant
+    - Epithelial
+    env2_labels:
+    - Stroma
+    - Fibroblast
+    - CAF
+    ignore_labels:
+    - Artifact
+    - CD8+ T cell
+    - Immune
+    - Macrophage
+    - Necrosis
+    - T cell
+    - Unknown
+  roi_mode: center
+  roi_center_frac: 0.6
+model:
+  latent_dim: 128
+  hidden_dim: 128
+  num_layers: 2
+  gate_hidden: 128
+  gate_l1: 0.0005
+  gate_tv: 0.005
+  enable_mms: true
+  enable_ot: true
+  enable_mechanomics: true
+  upwind_drift: true
+  irm_lambda: 0.05
+  irm_split: tumor_stroma
+  irm_warmup_epochs: 20
+  irm_balance: true
+  recon_loss: huber
+  huber_delta: 1.0
+  balance_recon: true
+solver:
+  method: rk4
+  use_adjoint: false
+  rtol: 0.001
+  atol: 0.001
+  max_steps: 200
+  adjoint_rtol: 0.001
+  adjoint_atol: 0.001
+  step_size: 0.05
+  num_time_points: 16
+  time_grid: power
+ot:
+  knn_k: 60
+  alpha: 0.5
+  epsilon: 0.08
+  max_iter: 100
+  update_freq: 5
+  cost_type: spatial
+  w1_p: 2
+  loss_weight: 0.2
+ood:
+  z_score_threshold: 3.5
+  fallback_disable_mod: true
+  fallback_disable_drift: true
+train:
+  epochs: 80
+  stage0_epochs: 10
+  stage1_epochs: 60
+  stage2_epochs: 10
+  batch_size: 1
+  lr: 0.0002
+  weight_decay: 1.0e-06
+  grad_clip: 1.0
+  log_every: 10
+  save_dir: runs/visium_crc_16um_cpu_quick
+  checkpoint_every: 10
+  early_stop_patience: 40
+  early_stop_min_delta: 0.0001
+  early_stop_start_epoch: 10
+viz:
+  out_dir: runs/visium_crc_16um_cpu_quick/figures
+grn_export:
+  enabled: true
+  method: cycle_jacobian
+  top_k: 20000
+  abs_score: true
+  ig_steps: 32
+  dedup_reciprocal: true
+  cycle_max_cells: 32

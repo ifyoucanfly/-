@@ -1,0 +1,101 @@
+device: cpu
+seed: 0
+data:
+  name: visium_hd_crc
+  annotation_csv: data/16um_squares_annotation.csv
+  gold_grn_path: runs/preprocessed/gold_grn_collectri_16um_GSM8594569_P5CRC_symbols.csv
+  num_timepoints: 8
+  pseudotime_mode: zE0
+  gold_force_keep: 0
+  gold_min_pos_edges: 500
+  gold_max_force_keep: 768
+  k_nn: 12
+  grid_um: 20.0
+  smooth_sigma: 1.2
+  smooth_radius: 3
+  zI_dim: 4
+  zN_dim: 4
+  delta_t: 1.0
+  num_genes: 1024
+  max_cells: 5000
+  env_map:
+    env1_labels:
+    - Tumor
+    - Malignant
+    - Epithelial
+    env2_labels:
+    - Stroma
+    - Fibroblast
+    - CAF
+    ignore_labels:
+    - Artifact
+    - CD8+ T cell
+    - Immune
+    - Macrophage
+    - Necrosis
+    - T cell
+    - Unknown
+  roi_mode: center
+  roi_center_frac: 0.6
+model:
+  latent_dim: 256
+  hidden_dim: 256
+  num_layers: 2
+  enable_mms: true
+  enable_mechanomics: true
+  upwind_drift: true
+  enable_ot: true
+  gate_l1: 0.0005
+  gate_tv: 0.005
+  gate_hidden: 128
+  irm_lambda: 0.05
+  irm_split: tumor_stroma
+  irm_warmup_epochs: 20
+  irm_balance: true
+  balance_recon: true
+  recon_loss: huber
+  huber_delta: 1.0
+solver:
+  method: rk4
+  rtol: 0.001
+  atol: 0.001
+  max_nfe: 4000
+  step_size: 0.05
+  num_time_points: 16
+  time_grid: power
+  max_steps: 200
+ot:
+  reg_eps: 0.05
+  max_iter: 100
+  update_freq: 5
+  knn_k: 60
+  alpha: 0.5
+  epsilon: 0.08
+  sinkhorn_iter: 60
+  loss_weight: 0.2
+ood:
+  zscore_thresh: 3.0
+  fallback_mode: diffusion_only
+train:
+  epochs: 300
+  lr: 0.0002
+  batch_size: 1
+  stage0_epochs: 50
+  stage1_epochs: 200
+  stage2_epochs: 50
+  log_every: 1
+  save_dir: runs/visium_crc_16um
+  weight_decay: 1.0e-06
+  grad_clip: 1.0
+  early_stop_patience: 40
+  early_stop_min_delta: 0.0001
+  early_stop_start_epoch: 50
+  checkpoint_every: 10
+grn_export:
+  top_k: 20000
+  enabled: true
+  method: cycle_jacobian
+  abs_score: true
+  dedup_reciprocal: true
+  ig_steps: 32
+  cycle_max_cells: 32

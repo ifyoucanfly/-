@@ -1,0 +1,59 @@
+device: cpu
+seed: 0
+data:
+  name: visium_hd_crc
+  annotation_csv: data/8um_squares_annotation.csv
+  gold_grn_path: null
+  num_timepoints: 4
+  pseudotime_mode: coord_pca
+  gold_force_keep: 32
+  k_nn: 12
+  grid_um: 20.0
+  smooth_sigma: 1.2
+  smooth_radius: 3
+  zI_dim: 4
+  zN_dim: 4
+  delta_t: 1.0
+  num_genes: 2000
+model:
+  latent_dim: 64
+  hidden_dim: 128
+  num_layers: 2
+  enable_mms: true
+  enable_mechanomics: true
+  upwind_drift: true
+  enable_ot: true
+  gate_l1: 0.001
+  gate_tv: 0.001
+solver:
+  method: dopri5
+  rtol: 0.0001
+  atol: 1.0e-05
+  max_nfe: 4000
+ot:
+  reg_eps: 0.05
+  max_iter: 60
+  update_freq: 5
+  knn_k: 80
+  alpha: 0.5
+  epsilon: 0.05
+  sinkhorn_iter: 60
+ood:
+  zscore_thresh: 3.0
+  fallback_mode: diffusion_only
+train:
+  epochs: 20
+  lr: 0.001
+  batch_size: 1
+  stage0_epochs: 5
+  stage1_epochs: 10
+  stage2_epochs: 5
+  log_every: 1
+  save_dir: runs/visium_crc_8um
+grn_export:
+  enabled: true
+  method: cycle_jacobian
+  top_k: 2000
+  abs_score: true
+  ig_steps: 32
+  cycle_max_cells: 32

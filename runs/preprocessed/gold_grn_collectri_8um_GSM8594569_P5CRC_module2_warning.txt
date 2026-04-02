@@ -1,0 +1,6 @@
+[Module2] HVG-intersected gold too small: 0 < 100
+Falling back to FULL symbol-space gold: /home/liangrui/local_mount/PhyCausal-STGRN-demo-plus/runs/preprocessed/gold_grn_collectri_16um_GSM8594569_P5CRC_symbols.csv
+Used mode: hybrid_from_src_gene_dst_gene
+Resolved idmap: None
+
+This is acceptable for now, but it means the current HVG subset has weak overlap with the external gold GRN.

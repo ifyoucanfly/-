@@ -1,0 +1,118 @@
+seed: 42
+device: cuda
+data:
+  name: visium_hd_crc
+  annotation_csv: data/16um_squares_annotation.csv
+  gold_grn_path: runs/preprocessed/gold_grn_collectri_16um_GSM8594569_P5CRC_symbols.csv
+  num_genes: 1024
+  num_timepoints: 8
+  pseudotime_mode: zE0
+  gold_force_keep: 512
+  gold_min_pos_edges: 2000
+  gold_max_force_keep: 1024
+  max_cells: 4096
+  batch_size: 1
+  k_nn: 8
+  delta_t: 1.0
+  noise_std: 0.01
+  grid_um: 20.0
+  smooth_sigma: 1.2
+  smooth_radius: 3
+  zI_dim: 4
+  zN_dim: 4
+  env_map:
+    env1_labels:
+    - Tumor
+    - Malignant
+    - Epithelial
+    env2_labels:
+    - Stroma
+    - Fibroblast
+    - CAF
+    ignore_labels:
+    - Artifact
+    - CD8+ T cell
+    - Immune
+    - Macrophage
+    - Necrosis
+    - T cell
+    - Unknown
+  roi_mode: center
+  roi_center_frac: 0.6
+  restrict_gene_pool_to_gold_ratio: 0.5
+model:
+  latent_dim: 128
+  hidden_dim: 256
+  num_layers: 2
+  gate_hidden: 96
+  gate_l1: 0.00012
+  gate_tv: 0.0008
+  enable_mms: true
+  enable_ot: true
+  enable_mechanomics: true
+  upwind_drift: true
+  irm_lambda: 0.05
+  irm_split: tumor_stroma
+  irm_warmup_epochs: 240
+  irm_balance: true
+  recon_loss: huber
+  huber_delta: 1.0
+  balance_recon: true
+solver:
+  method: rk4
+  use_adjoint: false
+  rtol: 0.001
+  atol: 0.001
+  max_steps: 96
+  adjoint_rtol: 0.001
+  adjoint_atol: 0.001
+  step_size: 0.08
+  num_time_points: 16
+  time_grid: power
+ot:
+  knn_k: 32
+  alpha: 0.5
+  epsilon: 0.08
+  max_iter: 80
+  update_freq: 10
+  cost_type: spatial
+  w1_p: 2
+  loss_weight: 0.2
+ood:
+  z_score_threshold: 3.5
+  fallback_disable_mod: true
+  fallback_disable_drift: true
+train:
+  epochs: 240
+  stage0_epochs: 60
+  stage1_epochs: 120
+  stage2_epochs: 60
+  batch_size: 1
+  lr: 0.00035
+  weight_decay: 1.0e-06
+  grad_clip: 1.0
+  log_every: 10
+  save_dir: runs/real_crc_16um_GSM8594569_P5CRC_hvg1024_gpu_v3
+  mms_lr_mult: 3.0
+  stage1_gate_l1_scale: 0.12
+  stage1_gate_tv_scale: 0.08
+  stage2_gate_l1_scale: 0.22
+  stage2_gate_tv_scale: 0.12
+  stage2_lr_scale: 0.45
+  checkpoint_every: 20
+  early_stop_patience: 40
+  early_stop_min_delta: 0.0001
+  early_stop_start_epoch: 150
+viz:
+  out_dir: runs/real_crc_16um_GSM8594569_P5CRC_hvg1024_gpu_v3/figures
+grn_export:
+  enabled: true
+  method: cycle_jacobian
+  top_k: 50000
+  abs_score: true
+  ig_steps: 32
+  dedup_reciprocal: true
+  cycle_max_cells: 256
+  n_subsamples: 8
+  cells_per_snapshot: 256
+  subsample_agg: median

@@ -1,0 +1,78 @@
+seed: 7
+device: cpu
+data:
+  name: sim_crc
+  num_spots: 2000
+  num_genes: 64
+  num_timepoints: 2
+  k_nn: 12
+  delta_t: 1.0
+  noise_std: 0.05
+  env_map:
+    env1_labels:
+    - Tumor
+    - Malignant
+    env2_labels:
+    - Stroma
+    - Fibroblast
+    - Macrophage
+    ignore_labels:
+    - Unknown
+    - Necrosis
+model:
+  latent_dim: 64
+  hidden_dim: 128
+  num_layers: 2
+  gate_hidden: 64
+  gate_l1: 0.001
+  gate_tv: 0.0005
+  enable_mms: true
+  enable_ot: true
+  enable_mechanomics: true
+  upwind_drift: true
+  irm_lambda: 0.01
+  irm_split: bio_gt_auto
+  irm_warmup_epochs: 0
+  irm_balance: true
+  recon_loss: huber
+  huber_delta: 1.0
+solver:
+  method: dopri5
+  rtol: 1.0e-05
+  atol: 1.0e-06
+  max_steps: 2000
+  use_adjoint: true
+  adjoint_rtol: 1.0e-05
+  adjoint_atol: 1.0e-06
+ot:
+  knn_k: 50
+  alpha: 0.5
+  epsilon: 0.05
+  max_iter: 200
+  update_freq: 5
+  cost_type: spatial
+  w1_p: 2
+ood:
+  z_score_threshold: 3.0
+  fallback_disable_mod: true
+  fallback_disable_drift: true
+train:
+  epochs: 30
+  batch_size: 1
+  lr: 0.0003
+  weight_decay: 1.0e-06
+  stage0_epochs: 10
+  stage1_epochs: 15
+  stage2_epochs: 5
+  log_every: 10
+  grad_clip: 1.0
+  save_dir: runs
+viz:
+  out_dir: runs/figures
+grn_export:
+  enabled: true
+  method: cycle_jacobian
+  top_k: 2000
+  abs_score: true
+  ig_steps: 32
+  cycle_max_cells: 32
